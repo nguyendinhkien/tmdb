@@ -9,26 +9,25 @@ class TrendingBloc extends Bloc<TrendingEvent, TrendingState>{
 
   final TrendingApiProvider provider = TrendingApiProvider();
   TrendingBloc() : super(TrendingInitialState());
+  static final page = 1;
 
 
   @override
   Stream<TrendingState> mapEventToState(TrendingEvent event) async*{
     if(event is TrendingSwitchDay){
-      yield* _mapSwitchDayToState();
+      yield* _mapSwitchDayToState(event);
     } else if(event is TrendingSwitchWeek){
       yield* _mapSwitchWeekToState();
-    } else if(event is TrendingShowMovieInfo){
-      yield TrendingShowedInfo(movies:event.movies,id: event.id);
     }
   }
 
-  Stream<TrendingState> _mapSwitchDayToState() async*{
+  Stream<TrendingState> _mapSwitchDayToState(TrendingSwitchDay event) async*{
     yield TrendingLoadingState();
 
-    TrendingResponse response = await provider.getTrendingDay();
+    TrendingResponse response = await provider.getTrendingDay(event.page);
 
     if(response.error ==''){
-      yield TrendingTodayState(response.results);
+      yield TrendingSuccess(response.results);
     }
     else{
       yield TrendingFailureState();
@@ -41,8 +40,7 @@ class TrendingBloc extends Bloc<TrendingEvent, TrendingState>{
     TrendingResponse response = await provider.getTrendingWeek();
 
     if(response.error ==''){
-      log('week');
-      yield TrendingTodayState(response.results);
+      yield TrendingSuccess(response.results);
     }
     else{
       yield TrendingFailureState();

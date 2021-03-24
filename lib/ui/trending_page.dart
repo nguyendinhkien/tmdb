@@ -23,9 +23,6 @@ class _TrendingPageState extends State<TrendingPage>{
               fontSize: 30,
               fontWeight: FontWeight.bold
           ),),
-          ElevatedButton(onPressed: (){
-            trendingBloc.add(TrendingSwitchWeek());
-          }, child: Text('Week'))
         ],
       ),
     );
@@ -64,7 +61,9 @@ class _TrendingPageState extends State<TrendingPage>{
                         mainAxisAlignment: MainAxisAlignment.start,
                         mainAxisSize: MainAxisSize.max,
                         children: [
-                          Text('${movie.title}', style: TextStyle(fontWeight: FontWeight.bold),),
+                          Container(
+                            width: 250,
+                              child: Text('${movie.title}', style: TextStyle(fontWeight: FontWeight.bold),)),
                           SizedBox(height: 8,),
                           Text('Release: ${movie.releaseDate}'),
                           SizedBox(height: 8,),
@@ -87,7 +86,7 @@ class _TrendingPageState extends State<TrendingPage>{
 
     //print(trendingState.toString());
     if(trendingState is TrendingInitialState) {
-      trendingBloc.add(TrendingSwitchDay());
+      trendingBloc.add(TrendingSwitchDay(1));
     }
     else if(trendingState is TrendingLoadingState){
       return SizedBox(
@@ -96,7 +95,7 @@ class _TrendingPageState extends State<TrendingPage>{
           child: CircularProgressIndicator()
       );
     }
-    else if(trendingState is TrendingTodayState||trendingState is TrendingThisWeekState||trendingState is TrendingShowedInfo){
+    else if(trendingState is TrendingSuccess){
       return Expanded(
         child:ListView.builder(
             itemCount: trendingState.movies.length,
@@ -112,8 +111,15 @@ class _TrendingPageState extends State<TrendingPage>{
       ),
     );
   }
-
-
+  final _scrollController = ScrollController();
+  final _scrollThreshold = 200.0;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _scrollController.addListener(() { });
+    final _trendBloc = BlocProvider.of<TrendingBloc>(context);
+  }
   @override
   Widget build(BuildContext context) {
     return BlocProvider(

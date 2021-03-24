@@ -14,42 +14,22 @@ class TrendingInitialState extends TrendingState{
 }
 class TrendingLoadingState extends TrendingState{}
 class TrendingFailureState extends TrendingState{}
-class TrendingShowedInfo extends TrendingState{
-  final int id;
+class TrendingSuccess extends TrendingState{
   final List<MovieTrending> movies;
+  final bool hasReachMax;
+  const TrendingSuccess({this.movies, this.hasReachMax});
 
-  TrendingShowedInfo({@required this.movies,@required this.id});
-
-  @override
-  // TODO: implement props
-  List<Object> get props => [movies,id];
-}
-class TrendingTodayState extends TrendingState{
-  final List<MovieTrending> movies;
-
-  const TrendingTodayState(this.movies);
+  TrendingSuccess copyWith({
+    movies,
+    hasReachMax
+  }){
+    return TrendingSuccess(
+      movies: movies??this.movies,
+      hasReachMax: hasReachMax?? this.hasReachMax
+    );
+  }
 
   @override
   // TODO: implement props
   List<Object> get props => [movies];
-}
-
-class TrendingThisWeekState extends TrendingState{
-  final List<MovieTrending> movies;
-
-  const TrendingThisWeekState(this.movies);
-
-  @override
-  // TODO: implement props
-  List<Object> get props => [movies];
-}
-
-class MovieInfoState extends TrendingState{
-  final int id;
-
-  const MovieInfoState(this.id);
-
-  @override
-  // TODO: implement props
-  List<Object> get props => [id];
 }

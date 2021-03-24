@@ -6,10 +6,10 @@ class TrendingApiProvider{
   final _apiKey = "b25347c1f257be0e30b03a1ae9ea9053";
   final _dio = Dio();
 
-  Future<TrendingResponse> getTrendingDay() async{
+  Future<TrendingResponse> getTrendingDay(page) async{
     try{
       Response response;
-      response = await _dio.get(_baseUrl+"day", queryParameters: {"api_key": _apiKey});
+      response = await _dio.get(_baseUrl+"day", queryParameters: {"api_key": _apiKey,'page': page});
       return TrendingResponse.fromJson(response.data);
     }catch(error){
       return TrendingResponse.withError(error);

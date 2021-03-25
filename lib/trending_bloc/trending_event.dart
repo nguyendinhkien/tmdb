@@ -8,23 +8,10 @@ abstract class TrendingEvent extends Equatable{
   List<Object> get props => [];
 }
 
-class TrendingSwitchDay extends TrendingEvent{
-  final int page;
-
-  TrendingSwitchDay(this.page);
+class TrendingFetch extends TrendingEvent{
+  TrendingFetch();
 
   @override
   // TODO: implement props
-  List<Object> get props => [page];
-}
-
-class TrendingSwitchWeek extends TrendingEvent{}
-
-class TrendingShowMovieInfo extends TrendingEvent{
-  final int id;
-  final List<MovieTrending> movies;
-  TrendingShowMovieInfo({@required this.movies,@required this.id});
-  @override
-  // TODO: implement props
-  List<Object> get props => [id];
+  List<Object> get props => [];
 }

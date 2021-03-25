@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_tmdb/trending_bloc/trending_bloc.dart';
+import 'package:flutter_tmdb/trending_bloc/trending_event.dart';
 import 'package:flutter_tmdb/ui/movie_info_page.dart';
 import 'package:flutter_tmdb/ui/trending_page.dart';
 
@@ -12,16 +15,13 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      routes: {
-        '/trending':(context) => TrendingPage(),
-        '/movieInfo': (context) => MovieInfoPage()
-      },
-        initialRoute: '/trending',
       title: 'Flutter Demo',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: TrendingPage()
+      home: BlocProvider(
+        create: (context)=>TrendingBloc()..add(TrendingFetch()),
+          child: TrendingPage())
     );
   }
 }

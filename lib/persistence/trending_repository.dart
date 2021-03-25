@@ -2,6 +2,5 @@ import 'package:flutter_tmdb/persistence/trending_api_provider.dart';
 
 class TrendingRepository{
   TrendingApiProvider api = TrendingApiProvider();
-  Future<TrendingResponse> getTrendingDay(page) => api.getTrendingDay(page);
-  Future<TrendingResponse> getTrendingWeek() => api.getTrendingWeek();
+  Future<TrendingResponse> getTrending(page) => api.getTrendingDay(page);
 }

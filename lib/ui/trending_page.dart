@@ -85,10 +85,8 @@ class _TrendingPageState extends State<TrendingPage>{
     final trendingState = trendingBloc.state;
 
     //print(trendingState.toString());
-    if(trendingState is TrendingInitialState) {
-      trendingBloc.add(TrendingSwitchDay(1));
-    }
-    else if(trendingState is TrendingLoadingState){
+    if(trendingState is TrendingLoadingState){
+      //trendingBloc.add(TrendingFetch());
       return SizedBox(
           height: 48,
           width: 48,
@@ -98,47 +96,75 @@ class _TrendingPageState extends State<TrendingPage>{
     else if(trendingState is TrendingSuccess){
       return Expanded(
         child:ListView.builder(
-            itemCount: trendingState.movies.length,
-            itemBuilder:(context, index)=> _itemTrending(trendingState.movies[index], context)
+            itemCount: trendingState.hasReachMax
+            ? trendingState.movies.length
+            : trendingState.movies.length + 1,
+            itemBuilder:(context, index) {
+              return index >= trendingState.movies.length
+                ? BottomLoader()
+                : _itemTrending(trendingState.movies[index], context);
+            },
+          controller: _scrollController,
         ),
       );
     }
-    return Center(
-      child: SizedBox(
-          height: 48,
-          width: 48,
-          child: CircularProgressIndicator()
-      ),
-    );
+    return Text('Loading fail');
   }
   final _scrollController = ScrollController();
   final _scrollThreshold = 200.0;
+  TrendingBloc _trendBloc;
+
+  _onScroll(){
+    final maxScroll = _scrollController.position.maxScrollExtent;
+    final currentScroll = _scrollController.position.pixels;
+    if(maxScroll - currentScroll <= _scrollThreshold){
+      _trendBloc.add(TrendingFetch());
+    }
+  }
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    _scrollController.addListener(() { });
-    final _trendBloc = BlocProvider.of<TrendingBloc>(context);
+    _scrollController.addListener(_onScroll);
+    _trendBloc = BlocProvider.of<TrendingBloc>(context);
+  }
+  @override
+  void dispose() {
+    _trendBloc.close();
+    super.dispose();
   }
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context)=>TrendingBloc(),
-      child: Scaffold(
-            body: Container(
-              padding: EdgeInsets.fromLTRB(15, 15, 15, 0),
-              child: Column(
-                  children:[
-                    BlocBuilder<TrendingBloc, TrendingState>(
-                      builder: (context, state)=>_topBar(BlocProvider.of<TrendingBloc>(context)),
-                    ),
-                    BlocBuilder<TrendingBloc, TrendingState>(
-                      builder: (context, state)=>_buildMovieItem(BlocProvider.of<TrendingBloc>(context)),
-                    ),
-                  ]
+    return Scaffold(
+            body: BlocBuilder(
+              bloc: _trendBloc,
+              builder:(context, state)=> Container(
+                padding: EdgeInsets.fromLTRB(15, 15, 15, 0),
+                child: Column(
+                    children:[
+                      _topBar(BlocProvider.of<TrendingBloc>(context)),
+                      _buildMovieItem(BlocProvider.of<TrendingBloc>(context)),
+                    ]
+                ),
               ),
-            ),
           ),
+    );
+  }
+}
+
+class BottomLoader extends StatelessWidget{
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      alignment: Alignment.center,
+      child: Center(
+        child: SizedBox(
+          width: 33,
+          height: 33,
+          child: CircularProgressIndicator(
+          ),
+        ),
+      ),
     );
   }
 }
